@@ -8,17 +8,39 @@
     tools:context="com.example.zhkuapp.view.LoginActivity">
 
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp">
+
+        <ImageView
+            android:id="@+id/photo"
+            android:background="@drawable/zhku"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            />
+
+    </RelativeLayout>
+
+
     <EditText
         android:id="@+id/userID"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:drawableLeft="@drawable/user"
         android:hint="userID"/>
 
     <EditText
         android:id="@+id/userPwd"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="userPwd"/>
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:hint="userPwd"
+        android:drawableLeft="@drawable/lock"/>
 
     <Button
         android:id="@+id/login"

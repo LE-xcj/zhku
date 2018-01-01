@@ -35,11 +35,10 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
 
-    //通过butterknife第三方框架进行依赖注入
+
     compile 'com.jakewharton:butterknife:7.0.1'
-
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.android.support:appcompat-v7:26.+'
     testCompile 'junit:junit:4.12'
 }

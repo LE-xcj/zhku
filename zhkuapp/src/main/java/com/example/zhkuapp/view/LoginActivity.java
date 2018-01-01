@@ -11,6 +11,8 @@ import android.widget.Toast;
 
 import com.example.zhkuapp.MainActivity;
 import com.example.zhkuapp.R;
+import com.example.zhkuapp.pojo.User;
+import com.example.zhkuapp.utils.SharePreferenceUtil;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.EMError;
 import com.hyphenate.chat.EMClient;
@@ -36,6 +38,14 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+
+        initView();
+    }
+
+    private void initView(){
+        //从sharePreference读取用户的信息
+        User user = SharePreferenceUtil.read(this);
+        et_userID.setText(user.getUserID());
     }
 
     public void click(View view) {

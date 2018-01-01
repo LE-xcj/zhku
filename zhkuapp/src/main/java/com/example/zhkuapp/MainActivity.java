@@ -5,16 +5,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.Toast;
+
 
 import com.example.zhkuapp.view.LoginActivity;
 import com.hyphenate.EMCallBack;
-import com.hyphenate.EMError;
+
 import com.hyphenate.chat.EMClient;
 
-import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
@@ -34,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
             finish();
             return;
         }
+
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 

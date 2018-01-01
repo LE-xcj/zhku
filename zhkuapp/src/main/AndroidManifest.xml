@@ -63,7 +63,8 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".view.LoginActivity"></activity>
+        <activity android:name=".view.LoginActivity" />
+        <activity android:name=".view.RegistActivity"></activity>
     </application>
 
 </manifest>
