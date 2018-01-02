@@ -4,25 +4,24 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.Toast;
 
-import com.example.zhkuapp.MainActivity;
 import com.example.zhkuapp.R;
 import com.example.zhkuapp.pojo.User;
+import com.example.zhkuapp.service.LoginService;
+import com.example.zhkuapp.utils.MD5Util;
+import com.example.zhkuapp.utils.MyProgressDialog;
+import com.example.zhkuapp.utils.MyToast;
 import com.example.zhkuapp.utils.SharePreferenceUtil;
-import com.hyphenate.EMCallBack;
-import com.hyphenate.EMError;
-import com.hyphenate.chat.EMClient;
-import com.hyphenate.exceptions.HyphenateException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class LoginActivity extends AppCompatActivity {
-
 
     @Bind(R.id.userID)
     EditText et_userID;
@@ -30,19 +29,27 @@ public class LoginActivity extends AppCompatActivity {
     @Bind(R.id.userPwd)
     EditText et_userPwd;
 
+    @Bind(R.id.showOrhide)
+    CheckBox showOrhide;
+
     // 弹出框
-    private ProgressDialog mDialog;
+    private MyProgressDialog mDialog;
+
+    //用于结束登录成功后结束loginactivity
+    public static LoginActivity context;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
-
+        context = this;
         initView();
     }
 
-    private void initView(){
+
+    private void initView() {
         //从sharePreference读取用户的信息
         User user = SharePreferenceUtil.read(this);
         et_userID.setText(user.getUserID());
@@ -50,190 +57,44 @@ public class LoginActivity extends AppCompatActivity {
 
     public void click(View view) {
         switch (view.getId()) {
+            //这里采用环信的登录验证，这是异步操作
             case R.id.login: {
-                signIn();
-            }
-            break;
+                mDialog = new MyProgressDialog(this,"正在登陆，请稍后...");
+                mDialog.show();
+                String userID = et_userID.getText().toString().trim();
+                String password = et_userPwd.getText().toString().trim();
+                if (LoginService.isNull(userID) || LoginService.isNull(password)) {
+                    MyToast.show(this, "账号和密码不能为空");
+                } else {
+                    //md5加密，向环信服务端进行用户验证
+                    password = MD5Util.MD5Encode(password);
+                    LoginService.login(this, userID, password, mDialog);
+                }
+            }break;
 
-            case R.id.regist: {
-                signUp();
-            }
-            break;
+            case R.id.to_regist: {
+                startActivity(new Intent(this, RegistActivity.class));
+                clearAll();
+            }break;
+
+            case R.id.showOrhide:{
+                if (showOrhide.isChecked())
+                    et_userPwd.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                else
+                    et_userPwd.setTransformationMethod(PasswordTransformationMethod.getInstance());
+            }break;
+
+            case R.id.forget: {
+                clearAll();
+                MyToast.show(this, "this is forget");
+            }break;
         }
     }
 
-    private void signUp() {
-        // 注册是耗时过程，所以要显示一个dialog来提示下用户
-        mDialog = new ProgressDialog(this);
-        mDialog.setMessage("注册中，请稍后...");
-        mDialog.show();
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                String userID = et_userID.getText().toString().trim();
-                String userPwd = et_userPwd.getText().toString().trim();
-                try {
-                    EMClient.getInstance().createAccount(userID, userPwd);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (!LoginActivity.this.isFinishing()) {
-                                mDialog.dismiss();
-                            }
-                            Toast.makeText(LoginActivity.this, "注册成功", Toast.LENGTH_LONG).show();
-                        }
-                    });
-                } catch (final HyphenateException e) {
-                    e.printStackTrace();
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (!LoginActivity.this.isFinishing()) {
-                                mDialog.dismiss();
-                            }
-                            /**
-                             * 关于错误码可以参考官方api详细说明
-                             * http://www.easemob.com/apidoc/android/chat3.0/classcom_1_1hyphenate_1_1_e_m_error.html
-                             */
-                            int errorCode = e.getErrorCode();
-                            String message = e.getMessage();
-                            Log.d("lzan13", String.format("sign up - errorCode:%d, errorMsg:%s", errorCode, e.getMessage()));
-                            switch (errorCode) {
-                                // 网络错误
-                                case EMError.NETWORK_ERROR:
-                                    Toast.makeText(LoginActivity.this, "网络错误 code: " + errorCode + ", message:" + message, Toast.LENGTH_LONG).show();
-                                    break;
-                                // 用户已存在
-                                case EMError.USER_ALREADY_EXIST:
-                                    Toast.makeText(LoginActivity.this, "用户已存在 code: " + errorCode + ", message:" + message, Toast.LENGTH_LONG).show();
-                                    break;
-                                // 参数不合法，一般情况是username 使用了uuid导致，不能使用uuid注册
-                                case EMError.USER_ILLEGAL_ARGUMENT:
-                                    Toast.makeText(LoginActivity.this, "参数不合法，一般情况是username 使用了uuid导致，不能使用uuid注册 code: " + errorCode + ", message:" + message, Toast.LENGTH_LONG).show();
-                                    break;
-                                // 服务器未知错误
-                                case EMError.SERVER_UNKNOWN_ERROR:
-                                    Toast.makeText(LoginActivity.this, "服务器未知错误 code: " + errorCode + ", message:" + message, Toast.LENGTH_LONG).show();
-                                    break;
-                                case EMError.USER_REG_FAILED:
-                                    Toast.makeText(LoginActivity.this, "账户注册失败 code: " + errorCode + ", message:" + message, Toast.LENGTH_LONG).show();
-                                    break;
-                                default:
-                                    Toast.makeText(LoginActivity.this, "ml_sign_up_failed code: " + errorCode + ", message:" + message, Toast.LENGTH_LONG).show();
-                                    break;
-                            }
-                        }
-                    });
-                }
-            }
-        }).start();
+    private void clearAll() {
+        et_userID.setText("");
+        et_userPwd.setText("");
     }
 
-    /**
-     * 登录方法
-     */
-    private void signIn() {
-        mDialog = new ProgressDialog(this);
-        mDialog.setMessage("正在登陆，请稍后...");
-        mDialog.show();
-        String username = et_userID.getText().toString().trim();
-        String password = et_userPwd.getText().toString().trim();
-        /*if (TextUtils.isEmpty(username) || TextUtils.isEmpty(password)) {
-            Toast.makeText(ECLoginActivity.this, "用户名和密码不能为空", Toast.LENGTH_LONG).show();
-            return;
-        }*/
-        EMClient.getInstance().login(username, password, new EMCallBack() {
-            /**
-             * 登陆成功的回调
-             */
-            @Override
-            public void onSuccess() {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mDialog.dismiss();
-
-                        // 加载所有会话到内存
-                        EMClient.getInstance().chatManager().loadAllConversations();
-                        // 加载所有群组到内存，如果使用了群组的话
-                        // EMClient.getInstance().groupManager().loadAllGroups();
-
-                        Toast.makeText(LoginActivity.this,"successful",Toast.LENGTH_LONG).show();
-                        // 登录成功跳转界面
-                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        startActivity(intent);
-                        finish();
-                    }
-                });
-            }
-
-            /**
-             * 登陆错误的回调
-             * @param i
-             * @param s
-             */
-            @Override
-            public void onError(final int i, final String s) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mDialog.dismiss();
-                        Log.d("lzan13", "登录失败 Error code:" + i + ", message:" + s);
-                        /**
-                         * 关于错误码可以参考官方api详细说明
-                         * http://www.easemob.com/apidoc/android/chat3.0/classcom_1_1hyphenate_1_1_e_m_error.html
-                         */
-                        switch (i) {
-                            // 网络异常 2
-                            case EMError.NETWORK_ERROR:
-                                Toast.makeText(LoginActivity.this, "网络错误 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
-                                break;
-                            // 无效的用户名 101
-                            case EMError.INVALID_USER_NAME:
-                                Toast.makeText(LoginActivity.this, "无效的用户名 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
-                                break;
-                            // 无效的密码 102
-                            case EMError.INVALID_PASSWORD:
-                                Toast.makeText(LoginActivity.this, "无效的密码 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
-                                break;
-                            // 用户认证失败，用户名或密码错误 202
-                            case EMError.USER_AUTHENTICATION_FAILED:
-                                Toast.makeText(LoginActivity.this, "用户认证失败，用户名或密码错误 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
-                                break;
-                            // 用户不存在 204
-                            case EMError.USER_NOT_FOUND:
-                                Toast.makeText(LoginActivity.this, "用户不存在 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
-                                break;
-                            // 无法访问到服务器 300
-                            case EMError.SERVER_NOT_REACHABLE:
-                                Toast.makeText(LoginActivity.this, "无法访问到服务器 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
-                                break;
-                            // 等待服务器响应超时 301
-                            case EMError.SERVER_TIMEOUT:
-                                Toast.makeText(LoginActivity.this, "等待服务器响应超时 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
-                                break;
-                            // 服务器繁忙 302
-                            case EMError.SERVER_BUSY:
-                                Toast.makeText(LoginActivity.this, "服务器繁忙 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
-                                break;
-                            // 未知 Server 异常 303 一般断网会出现这个错误
-                            case EMError.SERVER_UNKNOWN_ERROR:
-                                Toast.makeText(LoginActivity.this, "未知的服务器异常 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
-                                break;
-                            default:
-                                Toast.makeText(LoginActivity.this, "ml_sign_in_failed code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
-                                break;
-                        }
-                    }
-                });
-            }
-
-            @Override
-            public void onProgress(int i, String s) {
-
-            }
-        });
-    }
 
 }

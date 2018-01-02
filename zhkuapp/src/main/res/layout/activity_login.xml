@@ -11,49 +11,116 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
         android:layout_marginTop="30dp">
 
-        <ImageView
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/photo"
+            android:layout_width="128dp"
+            android:layout_height="128dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/zhku"
+            app:riv_oval="true" />
+
+        <!--riv_border_width： 边框宽度
+            riv_border_color： 边框颜色
+            riv_oval： 是否圆形
+            riv_corner_radius： 圆角弧度
+            riv_corner_radius_top_left：左上角弧度
+            riv_corner_radius_top_right： 右上角弧度
+            riv_corner_radius_bottom_left：左下角弧度
+            riv_corner_radius_bottom_right：右下角弧度
+            -->
+
+      <!--  <ImageView
             android:id="@+id/photo"
             android:background="@drawable/zhku"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            />
+            android:layout_centerInParent="true" />-->
 
     </RelativeLayout>
 
 
     <EditText
         android:id="@+id/userID"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
+        style="@style/myLoginETStyle"
         android:drawableLeft="@drawable/user"
-        android:hint="userID"/>
+        android:inputType="number|textEmailAddress"
+        android:hint="请输入您的学号" />
 
-    <EditText
-        android:id="@+id/userPwd"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:hint="userPwd"
-        android:drawableLeft="@drawable/lock"/>
+        >
+
+        <EditText
+            android:id="@+id/userPwd"
+            style="@style/myLoginETStyle"
+            android:drawableLeft="@drawable/lock"
+            android:hint="请输入您的密码"
+            android:inputType="textPassword" />
+
+        <CheckBox
+            android:id="@+id/showOrhide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:button="@drawable/radio_checkbox"
+            android:layout_alignRight="@id/userPwd"
+            android:layout_centerVertical="true"
+            android:onClick="click"
+            />
+
+    </RelativeLayout>
+
 
     <Button
         android:id="@+id/login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="login"
-        android:onClick="click"/>
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/button_shape"
+        android:onClick="click"
+        android:text="登录"
+        android:textColor="@android:color/white"
+        android:textSize="25dp" />
 
-    <Button
-        android:id="@+id/regist"
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="regist"
-        android:onClick="click"/>
+        android:layout_marginTop="15dp"
+        android:gravity="center_horizontal">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/to_regist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:text="马上注册"
+                android:onClick="click"
+                />
+
+            <TextView
+                android:id="@+id/forget"
+                android:layout_marginLeft="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="|    忘记密码"
+                android:onClick="click"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
 
 </LinearLayout>

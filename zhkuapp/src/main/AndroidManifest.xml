@@ -64,7 +64,8 @@
         </receiver>
 
         <activity android:name=".view.LoginActivity" />
-        <activity android:name=".view.RegistActivity"></activity>
+        <activity android:name=".view.RegistActivity" />
+        <activity android:name=".view.SetImforActivity"></activity>
     </application>
 
 </manifest>

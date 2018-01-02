@@ -11,17 +11,19 @@ public class User {
     private String sex;
     private String selfIntroduction;
     private String photo;
+    private String email;
 
     public User() {
     }
 
-    public User(String userID, String userName, String password, String sex, String selfIntroduction, String photo) {
+    public User(String userID, String userName, String password, String sex, String selfIntroduction, String photo, String email) {
         this.userID = userID;
         this.userName = userName;
         this.password = password;
         this.sex = sex;
         this.selfIntroduction = selfIntroduction;
         this.photo = photo;
+        this.email = email;
     }
 
     public String getUserID() {
@@ -70,5 +72,13 @@ public class User {
 
     public void setPhoto(String photo) {
         this.photo = photo;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }
