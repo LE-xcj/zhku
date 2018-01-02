@@ -33,4 +33,14 @@
         <item name="android:singleLine">true</item>
     </style>
 
+
+    <!--other-->
+    <style name="transparentFrameWindowStyle" parent="android:style/Theme.Dialog">
+
+    </style>
+
+    <style name="main_menu_animstyle">
+
+    </style>
+
 </resources>
