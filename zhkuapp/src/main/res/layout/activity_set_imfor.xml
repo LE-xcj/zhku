@@ -40,7 +40,7 @@
         android:layout_height="72dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="20dp"
-        android:background="@drawable/plus2"
+        android:background="@drawable/plus3"
         android:onClick="click"
         android:tooltipText="选择头像" />
 
@@ -50,7 +50,7 @@
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:background="@drawable/top_edittext"
-        android:hint="昵称" />
+        android:hint="昵称:仲恺人" />
 
     <EditText
         android:id="@+id/et_sex"
@@ -60,19 +60,27 @@
         android:background="@drawable/bottom_edittext"
         android:clickable="true"
         android:focusableInTouchMode="false"
-        android:hint="性别" />
+        android:hint="性别: 男" />
+
+    <EditText
+        android:id="@+id/et_email"
+        style="@style/myFirstSet"
+        android:background="@drawable/bottom_edittext"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:hint="邮箱:"/>
 
     <EditText
         android:id="@+id/et_selfIntroduction"
+        style="@style/myFirstSet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/bottom_edittext"
-        android:paddingTop="10dp"
-        style="@style/myFirstSet"
         android:gravity="top|left"
-        android:minLines="1"
+        android:hint="自我简介:"
         android:maxLines="5"
-        android:hint="自我简介" />
+        android:minLines="1"
+        android:paddingTop="10dp" />
 
 
     <Button

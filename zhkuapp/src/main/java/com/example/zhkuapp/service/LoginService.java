@@ -5,13 +5,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 import com.example.zhkuapp.MainActivity;
 import com.example.zhkuapp.dao.SingleUser;
+import com.example.zhkuapp.dao.UserDao;
 import com.example.zhkuapp.pojo.User;
 import com.example.zhkuapp.utils.MD5Util;
 import com.example.zhkuapp.utils.MyProgressDialog;
 import com.example.zhkuapp.utils.MyToast;
+import com.example.zhkuapp.utils.SharePreferenceUtil;
 import com.example.zhkuapp.view.LoginActivity;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.EMError;
@@ -23,6 +26,8 @@ import com.hyphenate.chat.EMClient;
 
 public class LoginService {
     private static MyProgressDialog dialog;
+
+    private static String guserID = "";
 
     public static boolean isNull(String str){
         if(null == str || "".equals(str))
@@ -38,9 +43,19 @@ public class LoginService {
             Context context = (Context) msg.obj;
             switch (flag) {
                 case EMError.EM_NO_ERROR:
+
+                    //设置single的信息,向服务器那边获取
+                    Log.e("this is login service","next to go User.DaoselectUser(userID)");
+                    UserDao.selectUser(guserID);
+
                     MyToast.show(context,"登录成功");
-                    context.startActivity(new Intent(context,MainActivity.class));
+
+                    //记录登录
+                    SharePreferenceUtil.write(LoginActivity.context,SingleUser.single);
+
+                    //关闭登录界面,显示主界面
                     LoginActivity.context.finish();
+
                     break;
                 // 网络异常 2
                 case EMError.NETWORK_ERROR:
@@ -90,6 +105,7 @@ public class LoginService {
      */
     public static void login(final Context context, final String userID, final String password, final MyProgressDialog mDialog) {
         dialog = mDialog;
+
         EMClient.getInstance().login(userID, password, new EMCallBack() {
             /**
              * 登陆成功的回调
@@ -100,12 +116,20 @@ public class LoginService {
                 EMClient.getInstance().chatManager().loadAllConversations();
                 // 加载所有群组到内存，如果使用了群组的话
                 // EMClient.getInstance().groupManager().loadAllGroups();
+
+                guserID = userID;
+                Log.e("this loginService ","上一句是将guserID赋值了");
+
+                /*//设置single的信息,向服务器那边获取
+                Log.e("this is login service","next to go User.DaoselectUser(userID)");
+                UserDao.selectUser(userID);*/
+
+
                 Message msg = new Message();
                 msg.what = EMError.EM_NO_ERROR;
                 msg.obj = context;
                 handler.sendMessage(msg);
-                SingleUser.single.setUserID(userID);
-                SingleUser.single.setPassword(password);
+
             }
 
             /**
@@ -132,7 +156,7 @@ public class LoginService {
 
     }
 
-    public static void login(final String userID, final String password){
+    public static void login(final Context context,final String userID, final String password){
         EMClient.getInstance().login(userID, password, new EMCallBack() {
             @Override
             public void onSuccess() {
@@ -142,7 +166,10 @@ public class LoginService {
 
             @Override
             public void onError(int i, String s) {
-
+                Message msg = new Message();
+                msg.what = i;
+                msg.obj = context;
+                handler.sendMessage(msg);
             }
 
             @Override

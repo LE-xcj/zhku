@@ -6,14 +6,19 @@ package com.example.zhkuapp.pojo;
 
 public class User {
     private String userID;
-    private String userName;
     private String password;
+    private String userName;
     private String sex;
+    private String email;
     private String selfIntroduction;
     private String photo;
-    private String email;
 
     public User() {
+    }
+
+    public User(String userID, String password) {
+        this.userID = userID;
+        this.password = password;
     }
 
     public User(String userID, String userName, String password, String sex, String selfIntroduction, String photo, String email) {

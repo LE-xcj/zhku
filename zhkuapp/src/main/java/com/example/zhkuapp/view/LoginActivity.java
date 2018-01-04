@@ -11,6 +11,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 
 import com.example.zhkuapp.R;
+import com.example.zhkuapp.dao.SingleUser;
 import com.example.zhkuapp.pojo.User;
 import com.example.zhkuapp.service.LoginService;
 import com.example.zhkuapp.utils.MD5Util;
@@ -51,8 +52,9 @@ public class LoginActivity extends AppCompatActivity {
 
     private void initView() {
         //从sharePreference读取用户的信息
-        User user = SharePreferenceUtil.read(this);
-        et_userID.setText(user.getUserID());
+        String userID = SingleUser.getUserID();
+        if (null != userID)
+            et_userID.setText(userID);
     }
 
     public void click(View view) {
@@ -74,7 +76,7 @@ public class LoginActivity extends AppCompatActivity {
 
             case R.id.to_regist: {
                 startActivity(new Intent(this, RegistActivity.class));
-                clearAll();
+                //clearAll();
             }break;
 
             case R.id.showOrhide:{

@@ -7,7 +7,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 
+import com.example.zhkuapp.dao.SingleUser;
+import com.example.zhkuapp.dao.UserDao;
+import com.example.zhkuapp.pojo.User;
+import com.example.zhkuapp.service.LoginService;
+import com.example.zhkuapp.utils.SharePreferenceUtil;
 import com.example.zhkuapp.view.LoginActivity;
+import com.example.zhkuapp.view.RegistActivity;
 import com.hyphenate.EMCallBack;
 
 import com.hyphenate.chat.EMClient;
@@ -16,20 +22,28 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
 
-
-    // 弹出框
-    private ProgressDialog mDialog;
+    public static MainActivity instance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // 判断sdk是否登录成功过，并没有退出和被踢，否则跳转到登陆界面
-        if (!EMClient.getInstance().isLoggedInBefore()) {
+        instance = this;
+        /*
+        * 这里应该补充：
+        *   当sharePreference提取的信息为空，或者密码为空，那么就跳转到登录界面;如果用户ID不为空，就显示用户ID
+        *   否则就直接进入主界面
+        *
+        *   注意：注销之后要把sharePreference记录的密码信息清空
+        * */
+
+        //初始化single
+        SharePreferenceUtil.read(this);
+        if (null == SingleUser.getPwd()){
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);
-            finish();
-            return;
+        } else{
+            LoginService.login(MainActivity.this,SingleUser.getUserID(),SingleUser.getPwd());
         }
 
         setContentView(R.layout.activity_main);

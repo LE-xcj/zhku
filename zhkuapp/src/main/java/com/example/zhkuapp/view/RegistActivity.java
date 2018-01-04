@@ -12,6 +12,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.zhkuapp.R;
+import com.example.zhkuapp.dao.SingleUser;
+import com.example.zhkuapp.dao.UserDao;
+import com.example.zhkuapp.pojo.User;
 import com.example.zhkuapp.service.RegisService;
 import com.example.zhkuapp.utils.MD5Util;
 import com.example.zhkuapp.utils.MyProgressDialog;
@@ -80,10 +83,18 @@ public class RegistActivity extends AppCompatActivity {
                 else{
                     dialog = new MyProgressDialog(this,"正在注册....");
                     dialog.show();
+
                     //md5加密
                     password = MD5Util.MD5Encode(password);
-                    //RegisService.regist(this,userID,password,dialog);
-                    startActivity(new Intent(this,SetImforActivity.class));
+
+                    //环信用户注册
+                    RegisService.regist(this,userID,password,dialog);
+
+                    //这里是方便测试的，上面那条语句取消注释，那么这里就要注释了下面三条语句都是为了测试
+                    //SingleUser.set(userID,password);
+                    //RegisService.regist(SingleUser.single);
+                    //startActivity(new Intent(this,SetImforActivity.class));
+
                 }
             }break;
 
@@ -99,5 +110,6 @@ public class RegistActivity extends AppCompatActivity {
             }break;
 
         }
+
     }
 }

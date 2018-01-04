@@ -2,17 +2,22 @@ package com.example.zhkuapp.service;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
+import android.os.health.PackageHealthStats;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.example.zhkuapp.dao.SingleUser;
+import com.example.zhkuapp.dao.UserDao;
+import com.example.zhkuapp.pojo.User;
 import com.example.zhkuapp.utils.MD5Util;
 import com.example.zhkuapp.utils.MyProgressDialog;
 import com.example.zhkuapp.utils.MyToast;
 import com.example.zhkuapp.view.LoginActivity;
 import com.example.zhkuapp.view.RegistActivity;
+import com.example.zhkuapp.view.SetImforActivity;
 import com.hyphenate.EMError;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.exceptions.HyphenateException;
@@ -58,17 +63,16 @@ public class RegisService {
                     //向环信服务器注册用户
                     EMClient.getInstance().createAccount(userID, userPwd);
                     msg.what = EMError.EM_NO_ERROR;
-                    Log.e("try",msg.what+"");
+
                 } catch (HyphenateException e) {
                     msg.what = e.getErrorCode();
-                    Log.e("catch",msg.what+"");
+
                 }
             }
         }).start();
 
         //设置当前登录用户
-        SingleUser.single.setUserID(userID);
-        SingleUser.single.setPassword(userPwd);
+        SingleUser.set(userID, userPwd);
         
         handler.sendMessage(msg);
     }
@@ -77,15 +81,30 @@ public class RegisService {
         @Override
         public void handleMessage(Message msg) {
             //关闭进度框
-            if (!RegistActivity.instance.isFinishing()) {
-                dialog.dismiss();
-            }
+            dialog.dismiss();
+            /*if (!RegistActivity.instance.isFinishing()) {
+            }*/
             int errorCode = msg.what;
             Context context = (Context) msg.obj;
             switch (errorCode) {
                 //注册成功
                 case EMError.EM_NO_ERROR:
                     MyToast.show(context,"注册成功！");
+
+                    Log.e("this is Registservice"," next go //向服务器的数据库插入一条新用户");
+                    //向服务器的数据库插入一条新用户
+                    RegisService.regist(SingleUser.single);
+
+                    //关闭登录界面
+                    LoginActivity.context.finish();
+
+                    //关闭注册界面
+                    RegistActivity.instance.finish();
+
+
+                    Log.e("this is Registsevice"," next go 跳转到完善信息的界面");
+                    //跳转到完善信息界面
+                    context.startActivity(new Intent(context,SetImforActivity.class));
                     break;
                 // 网络错误
                 case EMError.NETWORK_ERROR:
@@ -112,6 +131,11 @@ public class RegisService {
             }
         }
     };
+
+    public static void regist(User user){
+        UserDao.insertUser(user);
+    }
+
 
 }
 

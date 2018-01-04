@@ -41,33 +41,6 @@ public class PhotoUtil {
         activity.startActivityForResult(intent, 3);
     }
 
-    public static void setPicToView(Bitmap mBitmap, String path) {
-        String sdStatus = Environment.getExternalStorageState();
-        if (!sdStatus.equals(Environment.MEDIA_MOUNTED)) { // 检测sd是否可用
-            return;
-        }
-        FileOutputStream b = null;
-        File file = new File(path);
-        file.mkdirs();// 创建文件夹
-        String fileName = path + "head.jpg";// 图片名字
-        try {
-            b = new FileOutputStream(fileName);
-            mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, b);// 把数据写入文件
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }  finally {
-            try {
-                // 关闭流
-                b.flush();
-                b.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        }
-    }
-
 
     /**
      * 把bitmap转成圆形
