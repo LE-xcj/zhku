@@ -23,10 +23,10 @@ import android.widget.TextView;
 import com.example.zhkuapp.MainActivity;
 import com.example.zhkuapp.R;
 import com.example.zhkuapp.dao.SingleUser;
+import com.example.zhkuapp.dao.UploadDao;
 import com.example.zhkuapp.pojo.User;
 import com.example.zhkuapp.service.RegisService;
 import com.example.zhkuapp.service.UpdateUserService;
-import com.example.zhkuapp.service.UploadService;
 import com.example.zhkuapp.utils.MyToast;
 import com.example.zhkuapp.utils.PhotoUtil;
 import com.example.zhkuapp.utils.SDCardUtil;
@@ -60,7 +60,6 @@ public class SetImforActivity extends AppCompatActivity {
 
     private Button btn_picture, btn_photo, btn_cancle;
     private Bitmap head;        // 头像Bitmap
-    //private final static String PATH = "/sdcard/zhku_userHead/";    // sd路径
 
     private String photoName = "";
 
@@ -82,11 +81,18 @@ public class SetImforActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onDestroy() {
+        //将新注册填写的信息，保存在sharePreference里
+        SharePreferenceUtil.write(this,SingleUser.single);
+        super.onDestroy();
+    }
+
     public void click(View view) {
         switch (view.getId()) {
             case R.id.skip: {
+                SingleUser.setDefault();
                 finish();
-                SharePreferenceUtil.write(MainActivity.instance,SingleUser.single);
             }break;
 
             case R.id.btn_sure: {
@@ -104,7 +110,7 @@ public class SetImforActivity extends AppCompatActivity {
                 else{
 
                     /*
-                    *设置本地的信息
+                    *设置当前用户信息，single
                     * 注意：photo是一个未知的参数
                     * 因为：用户可以不设置头像，也可以设置了头像有跳过设置
                      */
@@ -114,21 +120,16 @@ public class SetImforActivity extends AppCompatActivity {
                     UpdateUserService.update(SingleUser.single);
                     Log.e("this is SetImforActivit", "上一句是向服务器更新用户信息");
 
-                    //将新注册填写的信息，保存在sharePreference里
-                    SharePreferenceUtil.write(this,SingleUser.single);
-                    Log.e("this selfImforActivity"," 上一句是将用户信息保存在sharePreference里");
-
-                    // 将头像图片保存在SD卡中
-                    SDCardUtil.setPicToView(head);
+                    // 将头像图片保存在SD卡中,photo的名字已经包括扩展名了
+                    SDCardUtil.setPicToView(head,SingleUser.getPhoto(),true);
                     Log.e("this selfImforActivity"," 上一句是将用户的头像保存在SD卡里");
 
                     //上传到服务器
-                    UploadService.uploadBitmap(new File(SDCardUtil.PATH,SingleUser.getUserID()+".jpg"));
+                    UploadDao.uploadBitmap(new File(SDCardUtil.getAbsolutePath(SingleUser.getPhoto(),true)),true);
                     Log.e("this selfImforActivity "," 上一句是将图片上传到服务器");
 
                     MyToast.show(this,"设置成功");
-
-                    finish();
+                    finish();       //显示最底的MainActivity
                 }
             }break;
 
@@ -137,6 +138,11 @@ public class SetImforActivity extends AppCompatActivity {
             }break;
         }
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        SingleUser.setDefault();
     }
 
     private void selectSex() {
@@ -263,7 +269,5 @@ public class SetImforActivity extends AppCompatActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
-
-    ;
 
 }

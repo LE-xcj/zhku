@@ -1,0 +1,114 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.zhkuapp.frgment.PersonlFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="#e6e6e6">
+
+        <TextView
+            android:text="设置"
+            android:textSize="20dp"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:background="#ffff"
+            android:layout_height="50dp" />
+
+        <RelativeLayout
+            android:id="@+id/myhistory"
+            android:layout_width="match_parent"
+            android:layout_height="104dp"
+            android:layout_marginTop="15dp"
+            android:background="#ffff"
+            android:onClick="click">
+
+
+        <com.loopj.android.image.SmartImageView
+            android:id="@+id/img_userphoto"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+            android:src="@drawable/zhku" />
+
+            <!--圆形头像
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/img_userphoto"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="20dp"
+                android:src="@drawable/zhku" />-->
+
+            <!--            <ImageView
+                android:id="@+id/img_userphoto"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="20dp"
+                android:background="@android:color/white"
+                android:src="@drawable/zhku" />-->
+
+            <TextView
+                android:id="@+id/t_username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="20dp"
+                android:layout_toRightOf="@id/img_userphoto"
+                android:text="仲恺人"
+                android:textSize="16dp" />
+
+
+            <ImageView
+                android:id="@+id/imge_sex"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="8dp"
+                android:layout_toRightOf="@id/t_username"
+                android:src="@drawable/girl" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/arrow" />
+
+
+        </RelativeLayout>
+
+        <EditText
+            android:id="@+id/et_edit"
+            android:drawableLeft="@drawable/edit"
+            android:text="完善信息"
+            style="@style/etSettingStyle"
+             />
+
+        <EditText
+            android:id="@+id/et_protect"
+            android:drawableLeft="@drawable/protect"
+            android:text="安全设置"
+            style="@style/etSettingStyle"
+            />
+
+        <EditText
+            android:id="@+id/loginout"
+            android:text="注销"
+            android:drawableLeft="@drawable/loginout"
+            style="@style/etSettingStyle"
+            />
+
+    </LinearLayout>
+
+
+
+</FrameLayout>

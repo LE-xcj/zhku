@@ -6,9 +6,23 @@
     android:layout_height="match_parent" tools:context="com.example.zhkuapp.MainActivity"
     android:orientation="vertical">
 
-    <Button
+    <!--fragment-->
+    <FrameLayout
+        android:id="@+id/body"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="nihao "/>
+        android:layout_height="0dp"
+        android:layout_weight="1.00">
+
+    </FrameLayout>
+
+    <!--底部导航栏-->
+    <me.majiajie.pagerbottomtabstrip.PageNavigationView
+        android:id="@+id/tab"
+        android:elevation="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_alignParentBottom="true"
+        android:background="#FFF"
+        />
 
 </LinearLayout>

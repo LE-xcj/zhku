@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.zhkuapp.R;
 import com.example.zhkuapp.dao.SingleUser;
 import com.example.zhkuapp.dao.UserDao;
@@ -19,12 +20,14 @@ import com.example.zhkuapp.service.RegisService;
 import com.example.zhkuapp.utils.MD5Util;
 import com.example.zhkuapp.utils.MyProgressDialog;
 import com.example.zhkuapp.utils.MyToast;
+import com.example.zhkuapp.utils.NetUtil;
 import com.example.zhkuapp.utils.VCodeUtil;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class RegistActivity extends AppCompatActivity {
+
 
     @Bind(R.id.userID)
     EditText et_userID;
@@ -44,9 +47,11 @@ public class RegistActivity extends AppCompatActivity {
     @Bind(R.id.returnLogin)
     TextView returnLogin;
 
+    //验证码
     private String trueCode;
     private MyProgressDialog dialog;
     public static RegistActivity instance;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,8 +74,11 @@ public class RegistActivity extends AppCompatActivity {
                 String surePwd = et_surePwd.getText().toString().trim();
                 String vcode = et_vcode.getText().toString().trim();
 
-                //先判断输入是否为空
-                if (RegisService.areNull(userID,password,surePwd))
+                //先判断网路是否可用
+                if (!NetUtil.isNetworkConnected(this))
+                    MyToast.show(this,"当前网络有问题！");
+                //判断输入是否为空
+                else if (RegisService.areNull(userID,password,surePwd))
                     MyToast.show(this,"输入框不能为空！");
                 else if(!RegisService.isMinLength(password))
                     MyToast.show(this,"密码长度不能小于6位！");
@@ -89,11 +97,6 @@ public class RegistActivity extends AppCompatActivity {
 
                     //环信用户注册
                     RegisService.regist(this,userID,password,dialog);
-
-                    //这里是方便测试的，上面那条语句取消注释，那么这里就要注释了下面三条语句都是为了测试
-                    //SingleUser.set(userID,password);
-                    //RegisService.regist(SingleUser.single);
-                    //startActivity(new Intent(this,SetImforActivity.class));
 
                 }
             }break;

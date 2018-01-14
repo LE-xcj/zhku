@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.zhkuapp.view.PublishItemActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#1296db"
+        app:navigationIcon="@drawable/back"
+        app:titleTextColor="@android:color/white"
+        app:title="lost">
+
+    </android.support.v7.widget.Toolbar>
+
+
+    <LinearLayout
+        style="@style/myLinearlayoutStyle"
+        android:orientation="horizontal">
+
+        <EditText
+            android:layout_weight="1"
+            android:id="@+id/et_lostitem"
+            style="@style/myPublishStyle"
+            android:drawableLeft="@drawable/item"
+            android:hint="物品名称" />
+
+        <EditText
+            android:id="@+id/et_time"
+            style="@style/myPublishStyle"
+            android:layout_weight="1"
+            android:drawableLeft="@drawable/time"
+            android:onClick="click"
+            android:focusableInTouchMode="false"
+            android:hint="时间" />
+
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/et_place"
+        android:layout_width="match_parent"
+        style="@style/myPublishStyle"
+        android:layout_marginTop="30dp"
+        android:drawableLeft="@drawable/place"
+        android:hint="地点" />
+
+    <LinearLayout
+        style="@style/myLinearlayoutStyle"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/et_contactname"
+            style="@style/myPublishStyle"
+            android:layout_weight="1"
+            android:drawableLeft="@drawable/contact"
+            android:hint="联系人" />
+
+        <EditText
+            android:id="@+id/et_call"
+            style="@style/myPublishStyle"
+            android:layout_weight="1"
+            android:drawableLeft="@drawable/call"
+            android:hint="联系方式" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        style="@style/myLinearlayoutStyle">
+
+        <EditText
+            android:id="@+id/et_description"
+            android:layout_weight="0.8"
+            style="@style/myPublishStyle"
+            android:layout_marginRight="20dp"
+            android:layout_height="150dp"
+            android:paddingBottom="100dp"
+            android:drawableLeft="@drawable/description"
+            android:gravity="left"
+            android:hint="物品描述"
+            android:inputType="textImeMultiLine" />
+
+        <ImageView
+            android:id="@+id/itemPhoto"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:layout_marginTop="30dp"
+            android:onClick="click"
+            android:src="@drawable/plus3" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/publish"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/button_shape"
+        android:onClick="click"
+        android:text="发布"
+        android:textColor="@android:color/white"
+        android:textSize="25dp" />
+
+
+
+</LinearLayout>

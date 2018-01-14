@@ -2,6 +2,7 @@ package com.example.zhkuapp.utils;
 
 import android.graphics.Bitmap;
 import android.os.Environment;
+import android.util.Log;
 
 import com.example.zhkuapp.dao.SingleUser;
 
@@ -16,10 +17,19 @@ import java.io.IOException;
 
 public class SDCardUtil {
 
-    public final static String PATH = "/sdcard/zhku_userHead/";    // sd路径
+    private final static String PATH = "/sdcard/zhku_userHead/";    // sd路径
+    private final static String ITEMPATH = "/sdcard/itemPhoto/";
     public final static String TYPE = ".jpg";       //图片类型
 
-    public static void setPicToView(Bitmap mBitmap) {
+    /*
+    * 这里将bitmap类型，通过流保存在sd卡里
+    * 参数：
+    *   1、bitmap类型对象
+    *   2、图片的名称，包括扩展名
+    *   3、flag，用于辨别保存的图片是用户头像还是item的图片
+    * */
+    public static void setPicToView(Bitmap mBitmap,String photoName , boolean flag) {
+
         //获取SD卡的状态
         String sdStatus = Environment.getExternalStorageState();
 
@@ -27,11 +37,19 @@ public class SDCardUtil {
         if (!sdStatus.equals(Environment.MEDIA_MOUNTED))
             return;
 
-        File file = new File(PATH);
+        //先把目录准备好
+        File file = null;
+        if (flag)
+            file = new File(PATH);
+        else
+            file = new File(ITEMPATH);
+
         FileOutputStream b = null;
         file.mkdirs();                      // y有则获取，无则创建目录
 
-        String fileName = PATH + SingleUser.getUserID() +".jpg";    // 图片名字
+        // 图片名字,包括扩展名
+        String fileName = getAbsolutePath(photoName,flag);
+
         try {
             b = new FileOutputStream(fileName);
             mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, b);// 把数据写入文件
@@ -49,5 +67,22 @@ public class SDCardUtil {
 
         }
     }
+
+
+    /*
+    * 这里是为了方便获取SD卡的绝对路径
+    * 传入的参数：
+    *   fileName：是指图片的名称，包括扩展名
+    *   flag：是为了辨别是获取用户头像的保存路径，还是item图片的路径
+    * */
+    public static String getAbsolutePath(String fileName,boolean flag){
+        String path = "";
+        if (flag)
+            path = PATH + fileName;
+        else
+            path = ITEMPATH + fileName;
+        return path;
+    }
+
 
 }

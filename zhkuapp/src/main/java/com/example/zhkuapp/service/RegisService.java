@@ -7,8 +7,11 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.health.PackageHealthStats;
 import android.util.Log;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.example.zhkuapp.MainActivity;
 import com.example.zhkuapp.dao.SingleUser;
 import com.example.zhkuapp.dao.UserDao;
 import com.example.zhkuapp.pojo.User;
@@ -22,6 +25,8 @@ import com.hyphenate.EMError;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.exceptions.HyphenateException;
 
+import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
+
 /**
  * Created by chujian on 2018/1/2.
  */
@@ -30,20 +35,24 @@ public class RegisService {
 
     private static MyProgressDialog dialog;
 
+    //判断单个字符串的内容是否为空
     public static boolean isNull(String str){
         if (null == str || "".equals(str))
             return true;
         return false;
     }
 
+    //判断两个字符串内容是否相同
     public static boolean isEquals(String input, String actual){
         return actual.equals(input);
     }
 
+    //密码不小于6位数
     public static boolean isMinLength(String str){
         return (str.length() >= 6);
     }
 
+    //判断字符串的内容是否为空
     public static boolean areNull(String ...strings){
         for (int i=0; i<strings.length; ++i){
             if (isNull(strings[i]))
@@ -52,59 +61,73 @@ public class RegisService {
         return false;
     }
 
-    public static void regist(final Context context, final String userID, final String userPwd, MyProgressDialog mDialog){
+    public static void regist(final Context context, final String userID,
+                              final String userPwd, MyProgressDialog mDialog){
+
         dialog = mDialog;
+        Log.e("this is registservice ", " r上一句是dialog = mDialog;");
+
         final Message msg = new Message();
         msg.obj = context;
+
+        Log.e("this regist service "," 下一句就是开启线程进行注册");
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
                     //向环信服务器注册用户
+                    Log.e("向环信那边发送注册请求", "id:"+userID);
                     EMClient.getInstance().createAccount(userID, userPwd);
+
+                    Log.e("this is regis success"," to huanxin ");
                     msg.what = EMError.EM_NO_ERROR;
+
+                    Log.e("this is regist service","下一句就是设置single");
+
+                    //设置当前登录用户
+                    SingleUser.set(userID, userPwd);
 
                 } catch (HyphenateException e) {
                     msg.what = e.getErrorCode();
-
                 }
+
+                //只有当环信那边注册完，才向服务器那边注册
+                handler.sendMessage(msg);
             }
         }).start();
 
-        //设置当前登录用户
-        SingleUser.set(userID, userPwd);
-        
-        handler.sendMessage(msg);
+        //之前把senMessage放在这里，导致环信注册的信息还没返回就已经把what给送走了
     }
 
+
+
+
+    //环信用户注册成功之后
     private static Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
-            //关闭进度框
-            dialog.dismiss();
-            /*if (!RegistActivity.instance.isFinishing()) {
-            }*/
+
             int errorCode = msg.what;
             Context context = (Context) msg.obj;
+
+            Log.e("this registservice "," 下一句是dismiss进度框");
+            //关闭进度框
+            dialog.dismiss();
+
             switch (errorCode) {
                 //注册成功
                 case EMError.EM_NO_ERROR:
-                    MyToast.show(context,"注册成功！");
 
                     Log.e("this is Registservice"," next go //向服务器的数据库插入一条新用户");
-                    //向服务器的数据库插入一条新用户
+
+                    //向服务器的数据库插入一条新用户,异步操作
                     RegisService.regist(SingleUser.single);
 
-                    //关闭登录界面
-                    LoginActivity.context.finish();
+                    Log.e("this is regist service ", "下一句是执行环信登录");
 
-                    //关闭注册界面
-                    RegistActivity.instance.finish();
+                    //环信登录，异步操作
+                    LoginService.login(RegistActivity.instance,SingleUser.getUserID(),SingleUser.getPwd(),0);
 
-
-                    Log.e("this is Registsevice"," next go 跳转到完善信息的界面");
-                    //跳转到完善信息界面
-                    context.startActivity(new Intent(context,SetImforActivity.class));
                     break;
                 // 网络错误
                 case EMError.NETWORK_ERROR:
@@ -130,8 +153,10 @@ public class RegisService {
                     break;
             }
         }
+
     };
 
+    //向服务器那边注册用户信息
     public static void regist(User user){
         UserDao.insertUser(user);
     }

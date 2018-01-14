@@ -14,5 +14,7 @@ public class MyProgressDialog extends ProgressDialog {
     public MyProgressDialog(Context context,String msg){
         super(context);
         this.setMessage(msg);
+        this.setCanceledOnTouchOutside(false);
+        this.setCancelable(false);
     }
 }

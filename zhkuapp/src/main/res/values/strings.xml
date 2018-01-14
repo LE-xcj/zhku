@@ -1,3 +1,26 @@
 <resources>
     <string name="app_name">zhkuapp</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_edit">EditActivity</string>
+    <string name="title_activity_protect">ProtectActivity</string>
+
+    <!--ItemDao-->
+    <string name="getItemUrl">http://192.168.1.104:8080/zhku/GetItemServlet</string>
+
+    <string name="itemPhotoUrl">http://192.168.1.104:8080/zhku/itemPhoto/</string>
+
+    <string name="publishItemUrl">http://192.168.1.104:8080/zhku/PublishItemServlet</string>
+
+    <!--uploadDao-->
+    <string name="uploadUrl">http://192.168.1.104:8080/zhku/UploadServlet?type=</string>
+
+    <!--UserDao-->
+    <string name="registUrl">http://192.168.1.104:8080/zhku/RegistServlet</string>
+
+    <string name="updateUrl">http://192.168.1.104:8080/zhku/UpdateUserServlet</string>
+
+    <string name="getUserUrl">http://192.168.1.104:8080/zhku/GetUserServlet</string>
+
+    <string name="userPhotoUrl">http://192.168.1.104:8080/zhku/userPhoto/</string>
 </resources>

@@ -31,4 +31,8 @@ public class UpdateUserService {
         return false;
     }
 
+    public static boolean isPreviousEmail(String p_email, String n_email){
+
+        return true;
+    }
 }

@@ -1,0 +1,64 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.example.zhkuapp.frgment.ItemFragment"
+    android:orientation="vertical">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/sbutton"
+            android:layout_marginRight="10dp"
+            android:text="失物"
+            android:layout_centerInParent="true"
+            />
+
+        <Switch
+            android:id="@+id/sbutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:typeface="normal"
+            android:textOn="拾物"
+            android:textOff="失物"
+            android:switchMinWidth="58dp"
+            android:textSize="20dp"
+            android:checked="false"
+            android:layout_centerInParent="true"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/sbutton"
+            android:layout_marginLeft="10dp"
+            android:text="拾物"
+            android:layout_centerInParent="true"
+            />
+
+        <Button
+            android:id="@+id/publish"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/plus4" />
+
+    </RelativeLayout>
+
+
+    <FrameLayout
+        android:id="@+id/itemContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </FrameLayout>
+
+</LinearLayout>

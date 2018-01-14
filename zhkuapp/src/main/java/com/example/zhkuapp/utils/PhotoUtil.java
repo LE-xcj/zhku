@@ -2,6 +2,7 @@ package com.example.zhkuapp.utils;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
@@ -11,6 +12,9 @@ import android.net.Uri;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 
+
+import com.example.zhkuapp.MainActivity;
+import com.example.zhkuapp.R;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -22,6 +26,9 @@ import java.io.IOException;
  */
 
 public class PhotoUtil {
+
+    private static final int BOY = 0;
+    private static final int GIRL = 1;
     /**
      * 调用系统的裁剪
      *
@@ -71,6 +78,23 @@ public class PhotoUtil {
         // canvas将bitmap画在backgroundBmp上
         canvas.drawBitmap(bitmap, null, rect, p);
         return backgroundBm;
+    }
+
+    public static Bitmap getBitmap(String absolutePath){
+        return BitmapFactory.decodeFile(absolutePath);
+    }
+
+
+    public static Bitmap getBitmap(int flag){
+        if (BOY == flag)
+            return BitmapFactory.decodeResource(MainActivity.instance.getResources(), R.drawable.boy);
+        else if(GIRL == flag)
+            return BitmapFactory.decodeResource(MainActivity.instance.getResources(),R.drawable.girl);
+        return null;
+    }
+
+    public static Bitmap getBitmap(){
+        return BitmapFactory.decodeResource(MainActivity.instance.getResources(),R.drawable.zhku);
     }
 
 
