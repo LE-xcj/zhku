@@ -47,9 +47,6 @@ public class ChatActivity extends AppCompatActivity implements EMMessageListener
     EditText etMessage;
     @Bind(R.id.btn_send)
     Button btnSend;
-/*
-    @Bind(R.id.text)
-    TextView mContentText;*/
 
     //当前对话的用户id
     private String chatObject = "";
@@ -184,6 +181,15 @@ public class ChatActivity extends AppCompatActivity implements EMMessageListener
 
     }
 
+
+    //定位到底部
+    private void toBottom() {
+        int position = myAdaptor.getItemCount();
+        if ( position > 0){
+            chatRecycleview.smoothScrollToPosition(position-1);
+        }
+    }
+
     //添加消息
     private void addMessage(EMMessage message){
         if (null != message)
@@ -199,6 +205,7 @@ public class ChatActivity extends AppCompatActivity implements EMMessageListener
     //更新消息列表
     private void updateChatView() {
         myAdaptor.notifyDataSetChanged();
+        toBottom();
     }
 
     //发送消息
