@@ -23,15 +23,12 @@ import org.apache.http.Header;
 public class UserDao {
 
     private final static String REGISTURL = MainActivity.instance.getString(R.string.registUrl);
+
     private final static String UPDATEURL = MainActivity.instance.getString(R.string.updateUrl);
+
     private final static String GETUSERURL = MainActivity.instance.getString(R.string.getUserUrl);
+
     private final static String IMGURL = MainActivity.instance.getString(R.string.userPhotoUrl);
-
-  /*  private final static String REGISTURL = "http://192.168.1.146:8080/zhku/RegistServlet";
-    private final static String UPDATEURL = "http://192.168.1.146:8080/zhku/UpdateUserServlet";
-    private final static String GETUSERURL = "http://192.168.1.146:8080/zhku/GetUserServlet";
-    private final static String IMGURL = "http://192.168.1.146:8080/zhku/userPhoto/";*/
-
 
     public static void updateUser(User user){
 

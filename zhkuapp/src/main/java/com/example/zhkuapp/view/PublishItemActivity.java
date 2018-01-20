@@ -59,6 +59,7 @@ public class PublishItemActivity extends AppCompatActivity {
     @Bind(R.id.itemPhoto)
     ImageView img_itemPhoto;
 
+    //发布帖子的用户id
     private String userID;
 
     /*
@@ -66,6 +67,8 @@ public class PublishItemActivity extends AppCompatActivity {
     * 1代表捡到东西帖子
      */
     private int type;
+
+    private final int LOST = 0;
 
     private Button btn_picture, btn_photo, btn_cancle;
     private Bitmap itemPhoto;
@@ -93,10 +96,10 @@ public class PublishItemActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         userID = intent.getStringExtra("userID");
-        type = intent.getIntExtra("type", 1);
+        type = intent.getIntExtra("type", LOST);
 
         //设置标题
-        if (0 == type) {
+        if (LOST == type) {
             toolbar.setTitle("我丢了东西");
         } else {
             toolbar.setTitle("我捡到了东西");
@@ -132,10 +135,11 @@ public class PublishItemActivity extends AppCompatActivity {
         }
     }
 
-    //如果帖子的物品名称为空，则不可以发布，其余为空都可以
+
+    //发布帖子
     private void publishItem() {
 
-
+        //网络有问题
         if (!NetUtil.isNetworkConnected(this)){
             MyToast.show(this,"网络有问题");
             return;
@@ -143,6 +147,7 @@ public class PublishItemActivity extends AppCompatActivity {
 
         String itemName = etLostitem.getText().toString().trim();
 
+        //如果帖子的物品名称为空，则不可以发布，其余为空都可以
         if (ItemService.strEmpty(itemName)){
             MyToast.show(this, "物品名称不能为空");
             return;
@@ -245,13 +250,27 @@ public class PublishItemActivity extends AppCompatActivity {
                 int itemPublishCode = ResultVO.getPublishItemCode();
                 int itemPhotoCode = ResultVO.getItemPhotoCode();
 
+                //还原默认值
                 ResultVO.setDefault(ITEM);
 
                 //如果发布成功，将发布的帖子添加到帖子容器中
-                if (ItemService.canPublish(itemPublishCode,itemPhotoCode)){
-                    if (null != item)
-                        ItemContainer.addLost(item);
-                }
+                /*if (ItemService.canPublish(itemPublishCode,itemPhotoCode)){
+
+                    //item是否为空
+                    if (null != item){
+
+                        //帖子是什么类型
+                       if (LOST == type){
+                           Log.e("this is publishActiviy"," add lost ");
+                           ItemContainer.addLost(item);
+                       }else{
+                           Log.e("this is publishActiviy"," add pcik ");
+                           ItemContainer.addPick(item);
+                       }
+
+                    }
+
+                }*/
 
                 Message msg = new Message();
                 msg.what = itemPublishCode;
@@ -262,6 +281,11 @@ public class PublishItemActivity extends AppCompatActivity {
         }).start();
     }
 
+    /*
+    * 在这里只有两种状态码：
+    * 1：成功
+    * -1：失败
+    * */
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -286,14 +310,21 @@ public class PublishItemActivity extends AppCompatActivity {
 
     //日期选择器
     private void showDateDialog() {
+
         Calendar calendar = Calendar.getInstance();
+
         DatePickerDialog datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
 
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+
                 String month = "" + monthOfYear;
                 String day = "" + dayOfMonth;
+
+                //月份的取值0~11，所以需要加个1
                 ++monthOfYear;
+
+                //而且显示的数字如果小于10，那么就不会补0，所以需要判断是否需要补0
                 if (10 > monthOfYear)
                     month = "0" + monthOfYear;
                 if (10 > dayOfMonth)
@@ -302,6 +333,8 @@ public class PublishItemActivity extends AppCompatActivity {
                 etTime.setText(year + "-" + month + "-" + day);
             }
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+
+        //显示dialog
         datePickerDialog.show();
     }
 

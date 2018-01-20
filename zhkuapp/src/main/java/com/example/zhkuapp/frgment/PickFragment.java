@@ -43,10 +43,23 @@ public class PickFragment extends Fragment implements ItemClickInterface{
     private int time = 0;
 
     //捡到物品的帖子
-    private final int TYPE = 1;
+    private final int PICK = 1;
 
-    public PickFragment() {
-    }
+    //下拉刷新标志
+    private final int PULLDOWN = 0;
+
+    //上拉加载的标志
+    private final int PULLUP = 1;
+
+    //成功
+    private final int SUCCESSFUL = 1;
+
+    private final int ZERO = 0;
+
+    //刷新的数量
+    private final int LENGTH = 5;
+
+    public PickFragment() {}
 
 
     @Override
@@ -94,25 +107,31 @@ public class PickFragment extends Fragment implements ItemClickInterface{
         mainPullRefreshPicklv.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2<RecyclerView>() {
             @Override
             public void onPullDownToRefresh(final PullToRefreshBase<RecyclerView> refreshView) {
-                time = 0;
 
-                //ItemContainer.clearPick();
+                //当下拉刷新时
+                //time = 0;
 
-                ItemDao.getItems(time, TYPE);
+                ItemDao.getItems(ZERO, PICK);
 
                 // 下拉刷新监听
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
+
                         int state = ResultVO.getItemChange();
 
-                        while (0 == state) {
+                        while (ZERO == state) {
                             state = ResultVO.getItemChange();
                         }
 
+                        //还原默认值
                         ResultVO.setItemDefault();
-                        Message msg = new Message();
-                        handler.sendMessage(msg);
+
+                        //更新界面
+                        refresh(state,PULLDOWN);
+
+/*                        Message msg = new Message();
+                        handler.sendMessage(msg);*/
 
                     }
 
@@ -123,23 +142,36 @@ public class PickFragment extends Fragment implements ItemClickInterface{
             //上拉事件监听
             @Override
             public void onPullUpToRefresh(PullToRefreshBase<RecyclerView> refreshView) {
-                // 上拉加载监听
-                ++time;
-                ItemDao.getItems(time, TYPE);
 
-                // 下拉刷新监听
+                // 上拉加载监听
+                ItemDao.getItems(time+1, PICK);
+
+                // 上拉刷新监听
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
+
+                        //获取异步请求的状态码
                         int state = ResultVO.getItemChange();
 
-                        while (0 == state) {
+                        /*
+                        *不断的循环获取状态码，
+                        *           0：默认状态
+                        *           1：成功获取数据的状态
+                        *           -1：获取失败状态
+                         */
+                        while (ZERO == state) {
                             state = ResultVO.getItemChange();
                         }
 
+                        //还原状态码的默认值
                         ResultVO.setItemDefault();
+
+                        //更新界面
+                        refresh(state,PULLUP);
+/*
                         Message msg = new Message();
-                        handler.sendMessage(msg);
+                        handler.sendMessage(msg);*/
                     }
 
                 }).start();
@@ -149,32 +181,82 @@ public class PickFragment extends Fragment implements ItemClickInterface{
 
     }
 
-    public void refresh(){
+    //向handler发送更新消息
+    public void refresh(int state , int direction){
         Message msg = new Message();
+        msg.what = state;
+        msg.obj = direction;
+
         handler.sendMessage(msg);
     }
 
+    /*
+    *更新界面，因为这里刷新帖子是联网操作，需要异步加载
+    * 所以这里更新需要handler机制
+     */
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            myAdaptor.setList(ItemContainer.getPickItems());
-            myAdaptor.notifyDataSetChanged();
 
+            int state = msg.what;
+            int direction = (int) msg.obj;
+
+            if (SUCCESSFUL == state){
+
+                //获取帖子容器
+                myAdaptor.setList(ItemContainer.getPickItems());
+
+                //监听适配器中数据的改变，并及时更新
+                myAdaptor.notifyDataSetChanged();
+
+                //下拉刷新
+                if (PULLDOWN == direction){
+
+                    //更新time的值
+                    time = ZERO;
+
+                    //定位到首部
+                    recyclerView.smoothScrollToPosition(ZERO);
+
+                }else{
+
+                    //更新time的值
+                    ++time;
+
+                    //获取帖子的总数
+                    int count = ItemContainer.getPickCount();
+
+                    //是否可以定位到下一条
+                    if (count > time*LENGTH)
+                        recyclerView.smoothScrollToPosition(time*LENGTH);
+
+                }
+
+            }else{
+                MyToast.show(getActivity(),"操作失败");
+            }
+
+            //停止显示刷新的展示
             mainPullRefreshPicklv.onRefreshComplete();
 
         }
     };
 
 
+    //处理用户点击帖子发布者头像的操作
     @Override
     public void itemClik(View view, int position) {
-        Item item = ItemContainer.getLostItem(position);
-        MyToast.show(getActivity(),"this is itemClick position"+position+"and the userID is " + item.getUserID());
 
+        //跳转到聊天界面
+        Item item = ItemContainer.getPickItem(position);
         Intent intent = new Intent(getActivity(), ChatActivity.class);
+
+        //传递用户id（发送信息的标志）、用户名的参数
         intent.putExtra("userID",item.getUserID());
         intent.putExtra("userName",item.getUserName());
+
+        //跳转
         startActivity(intent);
     }
 }

@@ -14,10 +14,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.example.zhkuapp.R;
-import com.example.zhkuapp.dao.MessageContainer;
 import com.example.zhkuapp.utils.MessageAdaptor;
 import com.example.zhkuapp.utils.MyToast;
 import com.example.zhkuapp.utils.NetUtil;
@@ -27,7 +25,6 @@ import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMCmdMessageBody;
 import com.hyphenate.chat.EMConversation;
 import com.hyphenate.chat.EMMessage;
-import com.hyphenate.chat.EMTextMessageBody;
 
 import java.util.ArrayList;
 import java.util.List;

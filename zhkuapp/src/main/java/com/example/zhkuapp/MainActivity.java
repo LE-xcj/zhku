@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
     private void init(){
         setContentView(R.layout.activity_main);
 
-        //initIItemFragment();
+        initIItemFragment();
 
         //底部导航栏
         tab = (PageNavigationView) findViewById(R.id.tab);

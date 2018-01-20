@@ -24,19 +24,33 @@ public class ItemService {
     private static final int DOWNPULL = 0;
 
     public static void operate(List<Item> items, int time , int type){
+
+        //这里要清空之前发布过的，但是没有itemID的帖子
+        clearNullItemID(type);
+
         if (DOWNPULL == time){
-            setItems(items,type);
+            addLastestItems(items,type);
         }else{
             addItems(items,type);
         }
     }
 
-    public static void setItems(List<Item> items, int type){
+    public static void addLastestItems(List<Item> items, int type){
         if (LOST == type){
-            ItemContainer.setLostItems(items);
-        }else if(PICK == type){
-            ItemContainer.setPickItems(items);
+            ItemContainer.addLostFirst(items);
+        }else if (PICK == type){
+            ItemContainer.addPickFirst(items);
         }
+    }
+
+    public static void clearNullItemID(int type){
+
+        if (LOST == type){
+            ItemContainer.clearLostNullItemID();
+        }else if (PICK == type){
+            ItemContainer.clearPickNullItemID();
+        }
+
     }
 
     public static void addItems(List<Item> items , int type){
@@ -91,5 +105,29 @@ public class ItemService {
         if ( 1 == itemPublishCode && 1 == itemPhotoCode)
             return true;
         return false;
+    }
+
+    public static int findFirstItemID(int type){
+        int itemID = 0;
+
+        if (LOST == type){
+            itemID = ItemContainer.getLostItemID();
+        }else if (PICK == type){
+            itemID = ItemContainer.getPickItemID();
+        }
+
+        return itemID;
+    }
+
+    public static int findLastItemID(int type){
+
+        int itemID = 0;
+
+        if (LOST == type){
+            itemID = ItemContainer.findLostLastItemID();
+        }else if (PICK == type){
+            itemID = ItemContainer.findPickLastItemID();
+        }
+        return itemID;
     }
 }

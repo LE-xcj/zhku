@@ -27,6 +27,8 @@ public class SDCardUtil {
     *   1、bitmap类型对象
     *   2、图片的名称，包括扩展名
     *   3、flag，用于辨别保存的图片是用户头像还是item的图片
+*               true:   用户头像
+*               false： item的图像
     * */
     public static void setPicToView(Bitmap mBitmap,String photoName , boolean flag) {
 
@@ -47,7 +49,7 @@ public class SDCardUtil {
         FileOutputStream b = null;
         file.mkdirs();                      // y有则获取，无则创建目录
 
-        // 图片名字,包括扩展名
+        // 获取绝对路径，也就是路径+图像名称(包括扩展名)
         String fileName = getAbsolutePath(photoName,flag);
 
         try {
@@ -74,6 +76,8 @@ public class SDCardUtil {
     * 传入的参数：
     *   fileName：是指图片的名称，包括扩展名
     *   flag：是为了辨别是获取用户头像的保存路径，还是item图片的路径
+    *   true : 用户头像
+    *   false：item图片
     * */
     public static String getAbsolutePath(String fileName,boolean flag){
         String path = "";

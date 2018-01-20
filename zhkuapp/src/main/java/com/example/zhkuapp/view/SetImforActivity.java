@@ -120,13 +120,15 @@ public class SetImforActivity extends AppCompatActivity {
                     UpdateUserService.update(SingleUser.single);
                     Log.e("this is SetImforActivit", "上一句是向服务器更新用户信息");
 
-                    // 将头像图片保存在SD卡中,photo的名字已经包括扩展名了
-                    SDCardUtil.setPicToView(head,SingleUser.getPhoto(),true);
-                    Log.e("this selfImforActivity"," 上一句是将用户的头像保存在SD卡里");
+                    if (null != head){
+                        // 将头像图片保存在SD卡中,photo的名字已经包括扩展名了
+                        SDCardUtil.setPicToView(head,SingleUser.getPhoto(),true);
+                        Log.e("this selfImforActivity"," 上一句是将用户的头像保存在SD卡里");
 
-                    //上传到服务器
-                    UploadDao.uploadBitmap(new File(SDCardUtil.getAbsolutePath(SingleUser.getPhoto(),true)),true);
-                    Log.e("this selfImforActivity "," 上一句是将图片上传到服务器");
+                        //上传到服务器
+                        UploadDao.uploadBitmap(new File(SDCardUtil.getAbsolutePath(SingleUser.getPhoto(),true)),true);
+                        Log.e("this selfImforActivity "," 上一句是将图片上传到服务器");
+                    }
 
                     MyToast.show(this,"设置成功");
                     finish();       //显示最底的MainActivity

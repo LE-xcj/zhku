@@ -2,22 +2,38 @@ package com.example.zhkuapp.pojo;
 
 /**
  * Created by chujian on 2018/1/8.
+ *
+ * 这里是帖子的Javabean，这里的属性与数据库的帖子表的字段不同
+ *
+ * 这里还包含了用户的三个属性字段，就是为了方便统一解析，而且除了物品名称不能为null，其他都是选填
+ *
+ * 而且这里是丢失物品和捡到物品帖子通用模型，用一个type属性来决定帖子的类型
+ *
+ * 帖子类型：
+ *       0：丢失物品的帖子
+ *       1：捡到物品的帖子
+ *
+ * 帖子状态：
+ *       0：未解决
+ *       1：已解决
  */
 
 public class Item {
 
-    private Integer id;
-    private String itemName;
-    private String lostTime;
-    private String lostPlace;
-    private String description;
-    private String contactName;
-    private String contactWay;
-    private String publishTime;
-    private int type;
-    private int state;
-    private String photo;
+    //帖子的属性
+    private Integer id;                 //帖子的id，自增
+    private String itemName;            //物品的名称
+    private String lostTime;            //时间
+    private String lostPlace;           //地点
+    private String description;         //物品描述
+    private String contactName;         //联系人
+    private String contactWay;          //联系方式
+    private String publishTime;         //帖子的发表日期，以此作为显示顺序的依据
+    private int type;                   //帖子的类型
+    private int state;                  //帖子的状态
+    private String photo;               //图片名称，包括扩展名
 
+    //用户的属性
     private String userID;
     private String userPhoto;
     private String userName;

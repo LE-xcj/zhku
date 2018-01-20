@@ -2,6 +2,16 @@ package com.example.zhkuapp.pojo;
 
 /**
  * Created by chujian on 2018/1/1.
+ *
+ * 用户的Javabean
+ *
+ * 用户id、密码都是不能为空
+ *
+ * 用户名：默认为“仲恺人”
+ * 性别： 默认为“男”
+ * 自我介绍：默认“这个人很懒，什么也没写”
+ *
+ *
  */
 
 public class User {
@@ -13,15 +23,15 @@ public class User {
     private String selfIntroduction;
     private String photo;
 
-    public User() {
-    }
+    public User() {}
 
     public User(String userID, String password) {
         this.userID = userID;
         this.password = password;
     }
 
-    public User(String userID, String userName, String password, String sex, String selfIntroduction, String photo, String email) {
+    public User(String userID, String userName, String password, String sex,
+                String selfIntroduction, String photo, String email) {
         this.userID = userID;
         this.userName = userName;
         this.password = password;

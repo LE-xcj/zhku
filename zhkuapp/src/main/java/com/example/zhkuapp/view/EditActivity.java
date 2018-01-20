@@ -13,7 +13,6 @@ import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -28,7 +27,6 @@ import com.example.zhkuapp.dao.ResultVO;
 import com.example.zhkuapp.dao.SingleUser;
 import com.example.zhkuapp.dao.UploadDao;
 import com.example.zhkuapp.dao.UserDao;
-import com.example.zhkuapp.service.UploadService;
 import com.example.zhkuapp.utils.MyProgressDialog;
 import com.example.zhkuapp.utils.MyToast;
 import com.example.zhkuapp.utils.NetUtil;
@@ -38,7 +36,6 @@ import com.example.zhkuapp.utils.SharePreferenceUtil;
 import com.loopj.android.image.SmartImageView;
 
 import java.io.File;
-import java.io.InterruptedIOException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;

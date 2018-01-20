@@ -41,10 +41,25 @@ public class LostFragment extends Fragment implements ItemClickInterface{
     private RecyclerView recyclerView;
     private MyAdaptor myAdaptor;
 
+    //刷新帖子数量的倍数
     private int time = 0;
 
     //丢失物品的帖子
-    private final int TYPE = 0;
+    private final int LOST = 0;
+
+    //下拉刷新标志
+    private final int PULLDOWN = 0;
+
+    //上拉加载的标志
+    private final int PULLUP = 1;
+
+    //成功
+    private final int SUCCESSFUL = 1;
+
+    private final int ZERO = 0;
+
+    //刷新的数量
+    private final int LENGTH = 5;
 
     public LostFragment() {}
 
@@ -66,6 +81,7 @@ public class LostFragment extends Fragment implements ItemClickInterface{
     }
 
     private void init() {
+
         //获取recycleView刷新的界面
         recyclerView = mainPullRefreshLostlv.getRefreshableView();
 
@@ -81,7 +97,6 @@ public class LostFragment extends Fragment implements ItemClickInterface{
         //设置适配器，三个参数：上下文、监听器、数据
         myAdaptor = new MyAdaptor(getActivity(), this, ItemContainer.getLostItems());
 
-
         //添加适配器
         recyclerView.setAdapter(myAdaptor);
 
@@ -95,28 +110,31 @@ public class LostFragment extends Fragment implements ItemClickInterface{
         mainPullRefreshLostlv.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2<RecyclerView>() {
             @Override
             public void onPullDownToRefresh(final PullToRefreshBase<RecyclerView> refreshView) {
-                time = 0;
 
-                //ItemContainer.clearLost();
+                //time = 0;
 
                 //只是void类型方法
-                ItemDao.getItems(time, TYPE);
+                ItemDao.getItems(ZERO, LOST);
 
                 // 下拉刷新监听
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
+
                         int state = ResultVO.getItemChange();
 
-                        while (0 == state) {
+                        while (ZERO == state) {
                             state = ResultVO.getItemChange();
                         }
 
-
-
+                        //还原默认值
                         ResultVO.setItemDefault();
-                        Message msg = new Message();
-                        handler.sendMessage(msg);
+
+                        //更新界面
+                        refresh(state,PULLDOWN);
+
+                        /*Message msg = new Message();
+                        handler.sendMessage(msg);*/
 
                     }
 
@@ -128,8 +146,9 @@ public class LostFragment extends Fragment implements ItemClickInterface{
             @Override
             public void onPullUpToRefresh(PullToRefreshBase<RecyclerView> refreshView) {
                 // 上拉加载监听
-                ++time;
-                ItemDao.getItems(time, TYPE);
+
+                //++time;
+                ItemDao.getItems(time+1, LOST);
 
                 // 下拉刷新监听
                 new Thread(new Runnable() {
@@ -142,8 +161,11 @@ public class LostFragment extends Fragment implements ItemClickInterface{
                         }
 
                         ResultVO.setItemDefault();
-                        Message msg = new Message();
-                        handler.sendMessage(msg);
+
+                        refresh(state,PULLUP);
+
+/*                        Message msg = new Message();
+                        handler.sendMessage(msg);*/
                     }
 
                 }).start();
@@ -153,8 +175,12 @@ public class LostFragment extends Fragment implements ItemClickInterface{
 
     }
 
-    public void refresh(){
+    public void refresh(int state, int direction){
         Message msg = new Message();
+
+        msg.what = state;
+        msg.obj = direction;
+
         handler.sendMessage(msg);
     }
 
@@ -163,9 +189,48 @@ public class LostFragment extends Fragment implements ItemClickInterface{
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            myAdaptor.setList(ItemContainer.getLostItems());
-            myAdaptor.notifyDataSetChanged();
 
+            int state = msg.what;
+            int direction = (int) msg.obj;
+
+            //操作成功
+            if (SUCCESSFUL == state){
+
+                //刷新数据
+                myAdaptor.setList(ItemContainer.getLostItems());
+                myAdaptor.notifyDataSetChanged();
+
+                //刷新方向，上拉
+                if (PULLDOWN == direction){
+
+                    //设置获取倍数
+                    time = ZERO;
+
+                    //定位到头部
+                    recyclerView.smoothScrollToPosition(ZERO);
+
+                }else{
+
+                    //更新time
+                    ++time;
+
+                    //获取item的总数
+                    int all = ItemContainer.getLostCount();
+
+                    //定位下一条数据
+                    if (all > time*LENGTH)
+                        recyclerView.smoothScrollToPosition(time*LENGTH);
+                }
+
+            }else{
+                //上拉加载失败，time无需变化
+
+                //下拉加载失败,time无需变化
+
+                MyToast.show(getActivity(),"操作失败");
+            }
+
+            //停止刷新
             mainPullRefreshLostlv.onRefreshComplete();
 
         }
@@ -185,13 +250,4 @@ public class LostFragment extends Fragment implements ItemClickInterface{
 
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 0){
-            if (resultCode == 0){
-                String str = data.getStringExtra("flag");
-                MyToast.show(getActivity(),"this is lostfragment flag : "+ str);
-            }
-        }
-    }
 }
